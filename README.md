@@ -98,6 +98,18 @@ const workflow = builder
     },
   })
 
+
+  .stepWorkflow({
+    name:'Choose wich workflow to use',
+    entry: () => '...'
+    options: {
+      'PLATE-anonime': () => AuthorizeExitWorkflow.build(),
+      'RFID-abone': () => blabla.build(),
+    }
+    exit: () => ...
+    withCompensation: () => ...
+  })
+
   .step('STEP FINAL')
   .invoke((ctx) => {
     return { final: true };
