@@ -99,9 +99,16 @@ export class SagaProcessor<T> {
 
     // errors is an array of validation errors
     if (errors.length > 0) {
-      throw new Error(
-        `Validation failed : ${errors.map(({ property }) => property)}`
-      );
+      errors.map(({ property, constraints }) => {
+        this.errors.push(
+          new Error(
+            `Validation failed on "${property}" : ` +
+              Object.values(constraints).join(", ")
+          )
+        );
+      });
+
+      throw new Error("Stop saga");
     }
   }
 
