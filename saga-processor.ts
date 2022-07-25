@@ -1,6 +1,8 @@
 import { InvokeAction } from "./types/invoke.type";
 import { SagaResponse } from "./types/saga-response";
 import { Workflow } from "./types/workflow.type";
+import { plainToInstance } from "class-transformer";
+import { validate } from "class-validator";
 
 export class SagaProcessor<T> {
   private steps = [];
@@ -31,13 +33,14 @@ export class SagaProcessor<T> {
     // Get step to execute
     const currentStep = this.steps[this.currentStep];
 
-    const { condition, invokes, withCompensation } = currentStep;
+    const { condition, validate, invokes, withCompensation } = currentStep;
 
     try {
       // If there is a condition, check it
       // If condition is true, run step
       if (this.checkCondition(condition)) {
         // If we execute this step, we inject compensation to the backward stack
+        if (validate) this.validate(validate);
         if (withCompensation) this.toCompensate.push(withCompensation);
 
         // Execute each invoke of this step (cascade)
@@ -82,6 +85,24 @@ export class SagaProcessor<T> {
 
     // End recording
     this.endLog("success");
+  }
+
+  // --------------------
+  // Validate data
+  // --------------------
+  async validate(dto) {
+    if (!dto) return;
+    // tranform the literal object to class object
+    const objInstance: any = plainToInstance(dto, this.ctx);
+    // validating and check the errors, throw the errors if exist
+    const errors = await validate(objInstance);
+
+    // errors is an array of validation errors
+    if (errors.length > 0) {
+      throw new TypeError(
+        `validation failed : ${errors.map(({ property }) => property)}`
+      );
+    }
   }
 
   // --------------------

@@ -4,6 +4,7 @@ export type Compensation = Fn<void>;
 
 export type InvokeAction = {
   name?: string;
+  validate?: any;
   condition?: Condition;
   action: Fn<any>;
   withCompensation?: Compensation;

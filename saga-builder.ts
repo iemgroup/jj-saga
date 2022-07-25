@@ -14,6 +14,7 @@ export class SagaBuilder {
 
     const step: SagaStep = {
       name,
+      validate: null,
       condition: null,
       invokes: [],
       withCompensation: null,
@@ -36,6 +37,7 @@ export class SagaBuilder {
     if (typeof realFn === "function") {
       step.invokes.push({
         name: realName,
+        validate: null,
         condition: null,
         action: realFn,
         withCompensation: null,
@@ -44,6 +46,15 @@ export class SagaBuilder {
       step.invokes.push(realFn);
     }
 
+    return this;
+  }
+
+  // --------------------
+  // Add a validation step
+  // --------------------
+  validate(dto): SagaBuilder {
+    const step = this.steps[this.index];
+    step.validate = dto;
     return this;
   }
 
