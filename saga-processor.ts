@@ -40,7 +40,7 @@ export class SagaProcessor<T> {
       // If condition is true, run step
       if (this.checkCondition(condition)) {
         // If we execute this step, we inject compensation to the backward stack
-        if (validate) this.validate(validate);
+        if (validate) await this.validate(validate);
         if (withCompensation) this.toCompensate.push(withCompensation);
 
         // Execute each invoke of this step (cascade)
