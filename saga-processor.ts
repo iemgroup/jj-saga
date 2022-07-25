@@ -99,8 +99,8 @@ export class SagaProcessor<T> {
 
     // errors is an array of validation errors
     if (errors.length > 0) {
-      throw new TypeError(
-        `validation failed : ${errors.map(({ property }) => property)}`
+      throw new Error(
+        `Validation failed : ${errors.map(({ property }) => property)}`
       );
     }
   }
