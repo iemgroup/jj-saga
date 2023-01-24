@@ -140,7 +140,7 @@ export class SagaProcessor<T> {
     await this.toCompensate.reverse().reduce(
       async (acc, cur) =>
         acc
-          .then(() => cur({ _jjerrors: [...this.errors], ...this.ctx }))
+          .then(() => cur({ ...this.ctx }, { errors: [...this.errors] }))
           .catch((err) => {
             this.errors.push(err);
             return;
