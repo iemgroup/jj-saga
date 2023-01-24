@@ -75,7 +75,7 @@ export class SagaProcessor<T> {
     if (withCompensation) this.toCompensate.push(withCompensation);
 
     // Recording state
-    this.startLog(invoke.name);
+    this.startLog(name);
 
     // Execute Invoke
     const response = await action(this.ctx);
@@ -140,7 +140,7 @@ export class SagaProcessor<T> {
     await this.toCompensate.reverse().reduce(
       async (acc, cur) =>
         acc
-          .then(() => cur({ ...this.ctx }))
+          .then(() => cur({ _jjerrors: [...this.errors], ...this.ctx }))
           .catch((err) => {
             this.errors.push(err);
             return;
